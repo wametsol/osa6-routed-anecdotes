@@ -1,7 +1,19 @@
 import React from 'react'
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
 
-const Menu = ({anecs, addnew, anecdoteById}) => (
+const notiStyle = {
+  color: 'green',
+  fontStyle: 'italic',
+  fontSize: 15,
+  borderStyle: 'solid',
+  borderWidth: 2,
+  paddingLeft: 20,
+  borderRadius: 20,
+  lineHeight: 0
+
+
+}
+const Menu = ({anecs, addnew, anecdoteById, message}) => (
   <div>  
     <Router>
       <div>
@@ -10,8 +22,11 @@ const Menu = ({anecs, addnew, anecdoteById}) => (
     <Link to='/createnew'>create new</Link>&nbsp;
     <Link to='/about'>about</Link>&nbsp;
         </div>
+        <div style={notiStyle}>
+        <p>{message}</p>
+        </div>
         <Route exact path="/" render={() => <AnecdoteList anecdotes={anecs} /> }/>
-        <Route exact path="/createnew" render={() => <CreateNew addNew={addnew}/> }/>
+        <Route exact path="/createnew" render={({history}) => <CreateNew history={history} addNew={addnew}/> }/>
         <Route exact path="/about" render={() => <About />} />
         <Route exact path="/anecdotes/:id" render={({match}) => 
         <Single anecdote={anecdoteById(match.params.id)} />} />
@@ -19,7 +34,11 @@ const Menu = ({anecs, addnew, anecdoteById}) => (
     </Router>
   </div>
 )
-
+const Notification = ({ message }) => (
+  <div>
+    <p> {message} </p>
+  </div>
+)
 const AnecdoteList = ({ anecdotes }) => (
   <div>
     <h2>Anecdotes</h2>
@@ -35,7 +54,7 @@ const Single = ({anecdote}) => (
   <div>
     <h2>{anecdote.content} by {anecdote.author}</h2>
     <p>has {anecdote.votes} votes</p>
-    <p>for more info see <a href="">{anecdote.info}</a></p>
+    <p>for more info see <a href={anecdote.info}>{anecdote.info}</a></p>
 
   </div>
 )
@@ -85,6 +104,8 @@ class CreateNew extends React.Component {
       info: this.state.info,
       votes: 0
     })
+    this.props.history.push('/')
+
   }
 
   render() {
@@ -133,13 +154,22 @@ class App extends React.Component {
           id: '2'
         }
       ],
-      notification: ''
+      notification: 'Moi'
     } 
   }
 
   addNew = (anecdote) => {
     anecdote.id = (Math.random() * 10000).toFixed(0)
     this.setState({ anecdotes: this.state.anecdotes.concat(anecdote) })
+    this.setState({notification: `a new anecdote '${anecdote.content}' created!`  })
+    
+    setTimeout(() => {
+      this.setState({
+        notification: ''
+      })
+    }, 10000);
+    console.log(this.state);
+    
   }
 
   anecdoteById = (id) =>
@@ -162,8 +192,8 @@ class App extends React.Component {
     return (
       <div>
         <h1>Software anecdotes</h1>
-          <Menu anecs={this.state.anecdotes} addnew={this.addNew} anecdoteById={this.anecdoteById} />
-          
+          <Menu anecs={this.state.anecdotes} addnew={this.addNew} anecdoteById={this.anecdoteById} message={this.state.notification} />
+         
         <Footer />
       </div>
     );
