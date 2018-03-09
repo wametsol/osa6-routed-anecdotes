@@ -1,5 +1,8 @@
 import React from 'react'
 import { BrowserRouter as Router, Route, NavLink } from 'react-router-dom'
+import { OverlayTrigger, Tooltip, InputGroup, Carousel, Thumbnail, Table, FormGroup, FormControl, ControlLabel, Button, Navbar, Nav, Grid, Row, Col } from 'react-bootstrap'
+
+
 
 const notiStyle = {
   color: 'green',
@@ -9,41 +12,64 @@ const notiStyle = {
   borderWidth: 2,
   paddingLeft: 20,
   borderRadius: 20,
-  lineHeight: 0
-
+  paddingTop: 10,
+  lineHeight: 1
 
 }
 
 const menuStyle ={
   fontSize: 20,
   backgroundColor: 'lightgrey',
-  paddingLeft: 100,
   lineHeight: 3
 }
 const linkStyle ={
   fontWeight: 'bold',
   color:'red',
   backgroundColor: 'lightblue',
-  paddingTop: 10,
-  paddingBottom: 10
+  borderRadius: 15,
+  paddingTop: 5,
+  paddingBottom: 5,
+  paddingLeft:2
+}
+const hideWhen = (message) => {
+  if(message === '')
+  return {
+    display: 'none'
+  }
+  
 }
 const Menu = ({anecs, addnew, anecdoteById, message}) => (
+    
   <div>  
     <Router>
       <div>
-        <div style={menuStyle}>  
-    <NavLink exact activeStyle={linkStyle} to='/'>anecdotes</NavLink>&nbsp;
-    <NavLink activeStyle={linkStyle} to='/createnew'>create new</NavLink>&nbsp;
-    <NavLink activeStyle={linkStyle} to='/about'>about</NavLink>&nbsp;
+        <div style={menuStyle}> 
+        <Navbar inverse collapseOnSelect>
+  <Navbar.Header>
+    <Navbar.Brand>
+      <p style={italic}>Anecdote app</p>
+    </Navbar.Brand>
+    <Navbar.Toggle />
+  </Navbar.Header>
+  <Navbar.Collapse>
+    <Nav>
+          <NavLink exact activeStyle={linkStyle} to='/'>anecdotes</NavLink>&nbsp;
+          <NavLink activeStyle={linkStyle} to='/createnew'>create new</NavLink>&nbsp;
+          <NavLink activeStyle={linkStyle} to='/about'>about</NavLink>&nbsp;
+          </Nav>
+  </Navbar.Collapse>
+</Navbar>
         </div>
+        <div style={hideWhen(message)}>
         <div style={notiStyle}>
         <p>{message}</p>
         </div>
-        <Route exact path="/" render={() => <AnecdoteList anecdotes={anecs} /> }/>
-        <Route exact path="/createnew" render={({history}) => <CreateNew history={history} addNew={addnew}/> }/>
-        <Route exact path="/about" render={() => <About />} />
-        <Route exact path="/anecdotes/:id" render={({match}) => 
-        <Single anecdote={anecdoteById(match.params.id)} />} />
+        </div>
+          <Route exact path="/" render={() => <AnecdoteList anecdotes={anecs} /> }/>
+          <Route exact path="/createnew" render={({history}) => <CreateNew history={history} addNew={addnew}/> }/>
+          <Route exact path="/about" render={() => <About />} />
+          <Route exact path="/anecdotes/:id" render={({match}) => 
+          <Single anecdote={anecdoteById(match.params.id)} />} />
       </div>
     </Router>
   </div>
@@ -53,14 +79,25 @@ const Notification = ({ message }) => (
     <p> {message} </p>
   </div>
 )
+const tooltip = (
+  <Tooltip id="tooltip">
+  <strong>Click this link to open more info!</strong>
+  </Tooltip>
+)
 const AnecdoteList = ({ anecdotes }) => (
   <div>
     <h2>Anecdotes</h2>
-    <ul>
-      {anecdotes.map(anecdote => <li key={anecdote.id} >
+    <Table striped bordered condensed hover>
+    <tbody>
+      {anecdotes.map(anecdote => <tr key={anecdote.id} >
+      <td>
+        <OverlayTrigger placement="right" overlay={tooltip}>
       <NavLink to={`/anecdotes/${anecdote.id}`}>{anecdote.content}</NavLink>
-      </li>)}
-    </ul>  
+      </OverlayTrigger>
+      </td>
+      </tr>)}
+    </tbody> 
+    </Table> 
   </div>
 )
 
@@ -72,18 +109,55 @@ const Single = ({anecdote}) => (
 
   </div>
 )
-
+const aboutStyle = {
+paddingLeft:20
+}
+const italic = {
+  fontStyle: 'italic'
+}
 const About = () => (
-  <div>
+  <div >
     <h2>About anecdote app</h2>
-    <p>According to Wikipedia:</p>
-    
-    <em>An anecdote is a brief, revealing account of an individual person or an incident. 
+    <div style={aboutStyle}>
+    <p >According to Wikipedia:</p>
+    <Grid>
+      <Row>
+        <Col xs={6} md={4}>
+    <em style={italic}>An anecdote is a brief, revealing account of an individual person or an incident. 
       Occasionally humorous, anecdotes differ from jokes because their primary purpose is not simply to provoke laughter but to reveal a truth more general than the brief tale itself, 
       such as to characterize a person by delineating a specific quirk or trait, to communicate an abstract idea about a person, place, or thing through the concrete details of a short narrative. 
       An anecdote is "a story with a point."</em>
-
+      </Col>
+      <Col xs={6} md={4}>
+      <Carousel>
+  <Carousel.Item>
+    <img width={900} height={500} alt="900x500" src="https://www.thefamouspeople.com/profiles/images/bill-gates-1.jpg" />
+    <Carousel.Caption>
+      
+      <p>Bill Gates</p>
+    </Carousel.Caption>
+  </Carousel.Item>
+  <Carousel.Item>
+    <img width={900} height={500} alt="900x500" src="https://specials-images.forbesimg.com/imageserve/9efa03c25417e97cae2969a1a4c60335/416x416.jpg?background=000000&cropX1=6&cropX2=663&cropY1=189&cropY2=846" />
+    <Carousel.Caption>
+      
+      <p>Gaben Newell</p>
+    </Carousel.Caption>
+  </Carousel.Item>
+  <Carousel.Item>
+    <img width={900} height={500} alt="900x500" src="https://d3egew7zjohdb1.cloudfront.net/ponIltIpIv-1440511484/talouselama/bp2nhq-linus-torvalds.jpg/alternates/LANDSCAPE_640/linus%20torvalds.jpg" />
+    <Carousel.Caption>
+      <h3></h3>
+      <p>Linus Torvalds</p>
+    </Carousel.Caption>
+  </Carousel.Item>
+</Carousel>
+      
+      </Col>
+      </Row>
+    </Grid>
     <p>Software engineering is full of excellent anecdotes, at this app you can find the best and add more.</p>
+    </div>
   </div>
 )
 
@@ -94,7 +168,21 @@ const Footer = () => (
     See <a href='https://github.com/mluukkai/routed-anecdotes'>https://github.com/mluukkai/routed-anecdotes</a> for the source code. 
   </div>
 )
-
+const contentTip = (
+  <Tooltip id="contentTip">
+    <strong>type anecdote here</strong>
+  </Tooltip>
+);
+const authorTip = (
+  <Tooltip id="authorTip">
+    <strong>this anecdote is by who?</strong>
+  </Tooltip>
+);
+const urlTip = (
+  <Tooltip id="urlTip">
+    <strong>where to find more about this</strong>
+  </Tooltip>
+);
 class CreateNew extends React.Component {
   constructor() {
     super()
@@ -127,19 +215,51 @@ class CreateNew extends React.Component {
       <div>
         <h2>create a new anecdote</h2>
         <form onSubmit={this.handleSubmit}>
-          <div>
-            content 
-            <input name='content' value={this.state.content} onChange={this.handleChange} />
-          </div>
-          <div>
+          <FormGroup>
+          <FormGroup controlId="formValidationSuccess4" validationState="success">
+            <ControlLabel>
+            
+            </ControlLabel>
+            <InputGroup>
+            <InputGroup.Addon>content</InputGroup.Addon>
+            <OverlayTrigger placement="top" overlay={contentTip}>
+            <FormControl
+             type="text"
+              name='content'
+               value={this.state.content}
+                onChange={this.handleChange} />
+                </OverlayTrigger>
+          </InputGroup>
+          </FormGroup>{' '}
+          <FormGroup controlId="formValidationSuccess4" validationState="success">
+          <ControlLabel>
             author
-            <input name='author' value={this.state.author} onChange={this.handleChange} />
-          </div>
-          <div>
-            url for more info
-            <input name='info' value={this.state.info} onChange={this.handleChange} />
-          </div> 
-          <button>create</button>
+            </ControlLabel>
+            
+            <InputGroup>
+            <InputGroup.Addon>author</InputGroup.Addon>
+            <OverlayTrigger placement="top" overlay={authorTip}>
+            <FormControl
+            type="text"
+             name='author'
+              value={this.state.author}
+               onChange={this.handleChange} />
+               </OverlayTrigger>
+            </InputGroup>
+            </FormGroup>{' '}
+            <FormGroup controlId="formValidationSuccess4" validationState="success">
+            <ControlLabel>
+            
+            </ControlLabel>
+            <InputGroup>
+            <InputGroup.Addon>url for more info</InputGroup.Addon>
+            <OverlayTrigger placement="top" overlay={urlTip}>
+            <FormControl type="text" name='info' value={this.state.info} onChange={this.handleChange} />
+            </OverlayTrigger>
+            </InputGroup>
+            </FormGroup>{' '}
+          </FormGroup> 
+          <Button type="submit" bsStyle="success">create</Button>
         </form>
       </div>  
     )
@@ -168,7 +288,7 @@ class App extends React.Component {
           id: '2'
         }
       ],
-      notification: 'Moi'
+      notification: ''
     } 
   }
 
@@ -204,7 +324,7 @@ class App extends React.Component {
  
   render() {
     return (
-      <div>
+      <div className="container">
         <h1>Software anecdotes</h1>
           <Menu anecs={this.state.anecdotes} addnew={this.addNew} anecdoteById={this.anecdoteById} message={this.state.notification} />
          
